@@ -6,7 +6,7 @@ const App = () => {
   const [second, setSecond] = useState(0)
   const [timerInterval, setTimerInterval] = useState(0)
   const [running, setRunning] = useState(false)
-  const bountyRune = new Audio('https://static.wikia.nocookie.net/dota2_gamepedia/images/3/3f/Rune_of_Bounty.mp3/revision/latest?cb=20141119020627')
+  
   const toggle = () => {
     if (running) {
       clearInterval(timerInterval)
@@ -24,10 +24,8 @@ const App = () => {
   }
 
   useEffect(() => {
-    if (minute % 5 === 4 && second === 50) {
-      console.log('bounty in 10s')
-      bountyRune.play()
-    }
+    const timers = Profile('off')
+    timers.forEach(timer => timer())
   })
 
   const minus = () => {
@@ -47,6 +45,50 @@ const App = () => {
       setMinute(m => m + 1)
     }
   }
+
+  const Profile = (position) => {
+    
+    const OffProfile = () => {
+        return [bountyRuneTimer]
+    }
+
+    const MidProfile = () => {
+        return [bountyRuneTimer, powerRuneTimer]
+    }
+
+    const SoftSupProfile = () => {
+        return []
+    }
+
+    const HardSupProfile = () => {
+        return []
+    }
+    const profile = {
+        'mid': MidProfile,
+        'off': OffProfile,
+        'soft-sup': SoftSupProfile,
+        'hard-sup': HardSupProfile
+    }
+
+    const runeTimer = (audio, interval) => {
+        if (minute % interval === interval - 1 && second === 48) {
+            console.log('bounty in 10s')
+            audio.play()
+          }
+    }
+
+    const bountyRuneTimer = () => {
+        const bountyAudio = new Audio('https://static.wikia.nocookie.net/dota2_gamepedia/images/3/3f/Rune_of_Bounty.mp3/revision/latest?cb=20141119020627')
+        runeTimer(bountyAudio, 5)
+    }
+
+    const powerRuneTimer = () => {
+        const powerAudio = new Audio('https://static.wikia.nocookie.net/dota2_gamepedia/images/2/26/Rune_of_Invisibility.mp3/revision/latest?cb=20141119020651')
+        runeTimer(powerAudio, 2)
+    }
+
+    return profile[position]()
+}
 
   return (
     <div>
